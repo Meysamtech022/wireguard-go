@@ -82,9 +82,9 @@ Run the application with the following command:
 ### Termux
 
 ```
-bash <(curl -fsSL https://raw.githubusercontent.com/Ptechgithub/wireguard-go/master/termux.sh)
+bash <(curl -fsSL https://raw.githubusercontent.com/Meysamtech022/wireguard-go/master/termux.sh)
 ```
-![1](https://github.com/Ptechgithub/configs/blob/main/media/18.jpg?raw=true)
+![1](https://github.com/Meysamtech022/configs/blob/main/media/18.jpg?raw=true)
 
 - بعد از نصب برای اجرای مجدد فقط کافیه که `warp` یا `usef` یا `./warp` را وارد کنید . 
 - روی برخی از مدل های قدیمی تر روش دوم یعنی arm 64 را انتخاب کنید. 
