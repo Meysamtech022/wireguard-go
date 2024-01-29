@@ -16,7 +16,7 @@ check_dependencies_build() {
     for dep in "${dependencies[@]}"; do
         if ! dpkg -s "${dep}" &> /dev/null; then
             echo -e "${yellow}${dep} is not installed. Installing...${rest}"
-            pkg install "${dep}" -y
+            sudo apt install "${dep}" -y
         fi
     done
 }
@@ -28,7 +28,7 @@ check_dependencies() {
     for dep in "${dependencies[@]}"; do
         if ! dpkg -s "${dep}" &> /dev/null; then
             echo -e "${yellow}${dep} is not installed. Installing...${rest}"
-            pkg install "${dep}" -y
+            sudo apt install "${dep}" -y
         fi
     done
 }
@@ -41,15 +41,15 @@ build() {
     fi
 
     echo -e "${green}Installing Warp...${rest}"
-    apt update -y && apt upgrade -y
+    sudo apt update && sudo apt upgrade -y
     check_dependencies_build
 
     if git clone https://github.com/bepass-org/wireguard-go.git &&
         cd wireguard-go &&
         go build main.go &&
         chmod +x main &&
-        cp main "$PREFIX/bin/s-vpn" &&
-        cp main "$PREFIX/bin/warp"; then
+        sudo cp main /usr/local/bin/s-vpn &&
+        sudo cp main /usr/local/bin/warp; then
         echo -e "${green}Warp installed successfully.${rest}"
     else
         echo -e "${red}Error installing WireGuard VPN.${rest}"
@@ -64,54 +64,16 @@ install() {
     fi
 
     echo -e "${green}Installing Warp...${rest}"
-    pkg update -y && pkg upgrade -y
-    pacman -Syu openssh = apt update; apt full-upgrade -y; apt install -y openssh
+    sudo apt update && sudo apt upgrade -y
+    sudo apt install openssh -y
     check_dependencies
 
     if wget https://github.com/bepass-org/wireguard-go/releases/download/v0.0.6-alpha/warp-android-arm64.ed853c.zip &&
-        unzip warp-android-arm64.ed853c.zip&&
+        unzip warp-android-arm64.ed853c.zip &&
         chmod +x warp &&
-        cp warp "$PREFIX/bin/s-vpn" &&
-        cp warp "$PREFIX/bin/warp"; then
+        sudo cp warp /usr/local/bin/s-vpn &&
+        sudo cp warp /usr/local/bin/warp; then
         rm "README.md" "LICENSE" "warp-android-arm64.ed853c.zip"
-        echo "================================================"
-        echo -e "${green}Warp installed successfully.${rest}"
-        socks
-    else
-        echo -e "${red}Error installing Warp.${rest}"
-    fi
-}
-
-# Install arm
-install_arm() {
-    if command -v warp &> /dev/null || command -v s-vpn &> /dev/null; then
-        echo -e "${green}Warp is already installed.${rest}"
-        return
-    fi
-
-    echo -e "${green}Installing Warp...${rest}"
-    pkg update -y && pkg upgrade -y
-    pacman -Syu openssh = apt update; apt full-upgrade -y; apt install -y openssh
-    check_dependencies
-
-    # Determine architecture
-    case "$(dpkg --print-architecture)" in
-        i386) ARCH="386" ;;
-        amd64) ARCH="amd64" ;;
-        armhf) ARCH="arm5" ;;
-        arm) ARCH="arm7" ;;
-        aarch64) ARCH="arm64" ;;
-        *) echo -e "${red}Unsupported architecture.${rest}"; return ;;
-    esac
-
-    WARP_URL="https://github.com/bepass-org/wireguard-go/releases/download/v0.0.6-alpha/warp-linux-$ARCH.ed853c.zip"
-
-    if wget "$WARP_URL" &&
-        unzip "warp-linux-$ARCH.ed853c.zip" &&
-        chmod +x warp &&
-        cp warp "$PREFIX/bin/s-vpn" &&
-        cp warp "$PREFIX/bin/warp"; then
-        rm "README.md" "LICENSE" "warp-linux-$ARCH.ed853c.zip"
         echo "================================================"
         echo -e "${green}Warp installed successfully.${rest}"
         socks
@@ -122,26 +84,26 @@ install_arm() {
 
 # Get socks config
 socks() {
-   echo ""
-   echo -e "${yellow}Copy this Config to ${purple}V2ray${green} Or ${purple}Nekobox ${yellow}and Exclude Termux${rest}"
-   echo "================================================"
-   echo -e "${green}socks://Og==@127.0.0.1:8086#warp_(s-vpn)${rest}"
-   echo "or"
-   echo -e "${green}Manually create a SOCKS configuration with IP ${purple}127.0.0.1 ${green}and port${purple} 8086..${rest}"
-   echo "================================================"
-   echo -e "${yellow}To run again, type:${green} warp ${rest}or${green} s-vpn ${rest}or${green} ./warp${rest}"
-   echo "================================================"
-   echo -e "${green} If you get a 'Bad address' error, run ${yellow}[Arm]${rest}"
-   echo ""
+    echo ""
+    echo -e "${yellow}Copy this Config to ${purple}V2ray${green} Or ${purple}Nekobox ${yellow}and Exclude Termux${rest}"
+    echo "================================================"
+    echo -e "${green}socks://Og==@127.0.0.1:8086#warp_(s-vpn)${rest}"
+    echo "or"
+    echo -e "${green}Manually create a SOCKS configuration with IP ${purple}127.0.0.1 ${green}and port${purple} 8086..${rest}"
+    echo "================================================"
+    echo -e "${yellow}To run again, type:${green} warp ${rest}or${green} s-vpn ${rest}or${green} ./warp${rest}"
+    echo "================================================"
+    echo -e "${green} If you get a 'Bad address' error, run ${yellow}[Arm]${rest}"
+    echo ""
 }
 
 #Uninstall
 uninstall() {
-    warp="$PREFIX/bin/warp"
+    warp="/usr/local/bin/warp"
     directory="/data/data/com.termux/files/home/wireguard-go"
     home="/data/data/com.termux/files/home"
     if [ -f "$warp" ]; then
-        rm -rf "$directory" "$PREFIX/bin/s-vpn" "wa.py" "$PREFIX/bin/warp" "$home/wgcf-profile.ini" "$home/warp" "$home/wgcf-identity.json" > /dev/null 2>&1
+        sudo rm -rf "$directory" "/usr/local/bin/s-vpn" "wa.py" "/usr/local/bin/warp" "$home/wgcf-profile.ini" "$home/warp" "$home/wgcf-identity.json" > /dev/null 2>&1
         echo -e "${red}Uninstallation completed.${rest}"
     else
         echo -e "${yellow} ____________________________________${rest}"
@@ -154,7 +116,7 @@ uninstall() {
 warp_plus() {
     if ! command -v python &> /dev/null; then
         echo "Installing Python..."
-        pkg install python -y
+        sudo apt install python -y
     fi
 
     echo -e "${green}Downloading and running${purple} Warp+ script...${rest}"
@@ -169,7 +131,7 @@ menu() {
     echo ""
     echo -e "${yellow}❤️Github.com/${cyan}bepass-org${yellow}/wireguard-go❤️${rest}"
     echo -e "${purple}*********************************${rest}"
-    echo -e "${blue}     ###${cyan} Warp in Termux ${blue}###${rest}   ${purple}  * ${rest}"
+    echo -e "${blue}     ###${cyan} Warp in Ubuntu ${blue}###${rest}   ${purple}  * ${rest}"
     echo -e "${purple}*********************************${rest}"
     echo -e "${cyan}1)${rest} ${green}Install Warp (vpn)${purple}           * ${rest}"
     echo -e "                              ${purple}  * ${rest}"
