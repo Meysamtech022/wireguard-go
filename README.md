@@ -86,7 +86,7 @@ bash <(curl -fsSL https://raw.githubusercontent.com/Meysamtech022/wireguard-go/m
 ```
 ![1](https://github.com/Meysamtech022/configs/blob/main/media/18.jpg?raw=true)
 
-- بعد از نصب برای اجرای مجدد فقط کافیه که `warp` یا `usef` یا `./warp` را وارد کنید . 
+- بعد از نصب برای اجرای مجدد فقط کافیه که `warp` یا `vpn` یا `./warp` را وارد کنید . 
 - روی برخی از مدل های قدیمی تر روش دوم یعنی arm 64 را انتخاب کنید. 
 - برای نمایش راهنما ` warp -h` را وارد کنید. 
 - ای پی و پورت `127.0.0.1:8086`پروتکل socks
